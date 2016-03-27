@@ -27,6 +27,7 @@
     "react": "^0.14.7",
     "react-bootstrap": "^0.28.4",
     "react-dom": "^0.14.7",
+    "spin": "0.0.1",
     "vue": "^1.0.20",
     "webpack": "^1.12.14",
     "webpack-stream": "^3.1.0"

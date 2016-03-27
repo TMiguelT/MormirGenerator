@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import MtgJson from './AllCards.json'
 import _ from 'lodash'
+import Spinner from 'spin'
 
 const groupedCards = _.chain(MtgJson)
     .filter(card => 'types' in card && card.types.indexOf('Creature') != -1)
@@ -11,16 +12,33 @@ new Vue({
     el: '#content',
     data: {
         cards: [],
-        cmc: 1
+        cmc: 1,
+        loading: true
     },
     computed: {
         cardsList(){
             return this.cards.join('\n');
         }
     },
+    ready(){
+
+        //Show the spinner
+        new Spinner({color:'#fff', lines: 12}).spin(this.$els.spin);
+
+        //Load the cards
+        require.ensure(['./AllCards.json'], require => {
+            const MtgJson = require('./AllCards.json');
+
+            this.loading = false;
+            this.groupedCards = _.chain(MtgJson)
+                .filter(card => 'types' in card && card.types.indexOf('Creature') != -1)
+                .groupBy('cmc')
+                .value();
+        })
+    },
     methods: {
         generate(){
-            const section = groupedCards[this.cmc];
+            const section = this.groupedCards[this.cmc];
             this.cards.push(_.sample(section).name);
         },
 

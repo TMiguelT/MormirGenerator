@@ -34,3 +34,7 @@ node_modules
 
 # Source maps
 *.map
+
+*.dist
+
+*.idea
