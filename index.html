@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mormir Generator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container" id="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Mormir Basic Generator</h1>
+            <p>Most recent set: Battle for Zendikar</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2>How to Use</h2>
+            <ul>
+                <li>Make a deck of 60 basic lands</li>
+                <li>Start a Cockatrice game as usual with this deck</li>
+                <li>Press Ctrl+T to open the tokens menu</li>
+                <li>Paste in <code>Momir Vig, Simic Visionary Avatar</code> to create a Mormir Avatar</li>
+                <li>Each time you activate Mormir's ability:
+                <ul>
+                    <li>Set the relevant CMC below</li>
+                    <li>Press the `Generate` button, and then `Copy Last` to add it to the clipboard</li>
+                    <li>Open the tokens menu in Cockatrice (Ctrl+T)</li>
+                    <li>Paste in the copied card name (Ctrl+V) into the name field without changing any other settings</li>
+                </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <textarea readonly v-el:ta rows="20" class="form-control">{{cardsList}}</textarea>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-3">
+            <div class="form-group">
+                <label>Converted Mana Cost</label>
+                <input type="number" min="0" max="99" v-model="cmc"/>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary" v-on:click="generate">Generate</button>
+            <button class="btn btn-default" v-on:click="copy">Copy Last</button>
+        </div>
+    </div>
+</div>
+</div>
+<script src="dist/bundle.js"></script>
+</body>
+</html>
