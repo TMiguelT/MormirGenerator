@@ -1,11 +1,12 @@
 const gulp = require('gulp');
 const getMtgJson = require('mtg-json');
 const webpack = require('webpack-stream');
+const CommonsChunkPlugin = require('webpack').optimize.CommonsChunkPlugin;
 
 const webpackConfig = {
     devtool: 'source-map',
     output: {
-        filename: "bundle.js"
+        filename: '[name].js'
     },
     module: {
         loaders: [

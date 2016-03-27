@@ -1,12 +1,6 @@
 import Vue from 'vue'
-import MtgJson from './AllCards.json'
 import _ from 'lodash'
 import Spinner from 'spin'
-
-const groupedCards = _.chain(MtgJson)
-    .filter(card => 'types' in card && card.types.indexOf('Creature') != -1)
-    .groupBy('cmc')
-    .value();
 
 new Vue({
     el: '#content',
