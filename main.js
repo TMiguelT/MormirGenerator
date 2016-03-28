@@ -114,13 +114,25 @@
 	new _vue2.default({
 	    el: '#content',
 	    data: {
-	        cards: [],
-	        cmc: 1,
+	        mo: [],
+	        jho: [],
+	        sto: [],
+	        moCmc: 1,
+	        stoCmc: 1,
 	        loading: true
 	    },
-	    computed: {
-	        cardsList: function cardsList() {
-	            return this.cards.join('\n');
+	    watch: {
+	        mo: function mo() {
+	            var textarea = this.$els.mo_ta;
+	            textarea.scrollTop = textarea.scrollHeight;
+	        },
+	        jho: function jho() {
+	            var textarea = this.$els.jho_ta;
+	            textarea.scrollTop = textarea.scrollHeight;
+	        },
+	        sto: function sto() {
+	            var textarea = this.$els.sto_ta;
+	            textarea.scrollTop = textarea.scrollHeight;
 	        }
 	    },
 	    ready: function ready() {
@@ -153,20 +165,57 @@
 	
 	        //Load the cards
 	        __webpack_require__.e/* require */(1, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(6)]; (function (MtgJson) {
-	            _this.groupedCards = MtgJson;
+	            _this.cards = MtgJson;
 	            _this.loading = false;
 	        }.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));});
 	    },
 	
 	    methods: {
-	        generate: function generate() {
-	            var section = this.groupedCards[this.cmc];
-	            this.cards.push(_lodash2.default.sample(section).name);
+	        generate: function generate(type) {
+	            var _this2 = this;
+	
+	            switch (type) {
+	                case 'mo':
+	                    var section = this.cards.mo[this.moCmc];
+	                    this.mo.push(_lodash2.default.sample(section).name);
+	                    break;
+	                case 'jhoInstant':
+	                    for (var i = 0; i < 3; i++) {
+	                        this.jho.push(_lodash2.default.sample(this.cards.jhoInstants).name);
+	                    }break;
+	                case 'jhoSorcery':
+	                    for (var _i = 0; _i < 3; _i++) {
+	                        this.jho.push(_lodash2.default.sample(this.cards.jhoSorceries).name);
+	                    }break;
+	                case 'sto':
+	                    var card = _lodash2.default.chain(this.cards.sto).pickBy(function (value, key) {
+	                        return parseInt(key) < _this2.stoCmc;
+	                    }).values().flatten().sample().value();
+	
+	                    this.sto.push(card.name);
+	                    break;
+	            }
 	        },
-	        copy: function copy() {
-	            var textarea = this.$els.ta;
-	            var lastCard = _lodash2.default.last(this.cards).length;
-	            var totalLength = this.cardsList.length;
+	        text: function text(type) {
+	            return this[type].join('\n');
+	        },
+	        copy: function copy(type) {
+	            var textarea = void 0;
+	            var lastCard = void 0;
+	            var totalLength = void 0;
+	
+	            switch (type) {
+	                case "mo":
+	                    textarea = this.$els.mo_ta;
+	                    lastCard = _lodash2.default.last(this.mo).length;
+	                    totalLength = this.text('mo').length;
+	                    break;
+	                case "sto":
+	                    textarea = this.$els.sto_ta;
+	                    lastCard = _lodash2.default.last(this.sto).length;
+	                    totalLength = this.text('sto').length;
+	                    break;
+	            }
 	
 	            //Select the new area
 	            textarea.setSelectionRange(totalLength - lastCard, totalLength);
