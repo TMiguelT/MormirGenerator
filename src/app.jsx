@@ -6,20 +6,22 @@ new Vue({
     el: '#content',
     data: {
         mo: [],
-        jho: [],
+        jho: [[], [], []],
         sto: [],
-        moCmc: 1,
-        stoCmc: 1,
+        moCmc: null,
+        stoCmc: null,
         loading: true
     },
-    watch:{
+    watch: {
         mo(){
             const textarea = this.$els.mo_ta;
             textarea.scrollTop = textarea.scrollHeight;
         },
         jho(){
-            const textarea = this.$els.jho_ta;
-            textarea.scrollTop = textarea.scrollHeight;
+            for (let i = 0; i < 3; i++) {
+                const textarea = this.$els[`jho_ta_${i}`];
+                textarea.scrollTop = textarea.scrollHeight;
+            }
         },
         sto(){
             const textarea = this.$els.sto_ta;
@@ -68,11 +70,11 @@ new Vue({
                     break;
                 case 'jhoInstant':
                     for (let i = 0; i < 3; i++)
-                        this.jho.push(_.sample(this.cards.jhoInstants).name);
+                        this.jho[i].push(_.sample(this.cards.jhoInstants).name);
                     break;
                 case 'jhoSorcery':
                     for (let i = 0; i < 3; i++)
-                        this.jho.push(_.sample(this.cards.jhoSorceries).name);
+                        this.jho[i].push(_.sample(this.cards.jhoSorceries).name);
                     break;
                 case 'sto':
                     const card = _.chain(this.cards.sto)
@@ -87,11 +89,14 @@ new Vue({
             }
         },
 
-        text(type){
-            return this[type].join('\n');
+        text(type, index){
+            if (type == 'jho')
+                return this[type][index].join('\n');
+            else
+                return this[type].join('\n');
         },
 
-        copy(type){
+        copy(type, index){
             let textarea;
             let lastCard;
             let totalLength;
@@ -106,6 +111,12 @@ new Vue({
                     textarea = this.$els.sto_ta;
                     lastCard = _.last(this.sto).length;
                     totalLength = this.text('sto').length;
+                    break;
+
+                case "jho":
+                    textarea = this.$els[`jho_ta_${index}`];
+                    lastCard = _.last(this.jho[index]).length;
+                    totalLength = this.text('jho', index).length;
                     break;
             }
 
