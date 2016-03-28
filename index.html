@@ -13,34 +13,18 @@
         [v-cloak] {
             display: none;
         }
+
+        textarea {
+            resize: none;
+        }
     </style>
 </head>
 <body>
 <div class="container" id="content">
     <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 col-md-offset-3 text-center">
             <h1>MoJhoSto Generator</h1>
             <p>Most recent set: Oath of the Gatewatch</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <h2>How to Use</h2>
-            <ul>
-                <li>Make a deck of 60 basic lands along with any of the 3 avatars you intend to use</li>
-                <li>Start a Cockatrice game as usual with this deck</li>
-                <li>Each time you activate an avatar's ability:
-                    <ul>
-                        <li>Set the relevant CMC below</li>
-                        <li>Press the relevant `Generate` button, and then `Copy Last` to add it to the clipboard
-                            (this doesn't work for Jhoria since she generates 3 and you only pick one)</li>
-                        <li>Open the tokens menu in Cockatrice (Ctrl+T)</li>
-                        <li>Paste in the copied card name (Ctrl+V) into the name field without changing any other
-                            settings
-                        </li>
-                    </ul>
-                </li>
-            </ul>
         </div>
     </div>
     <div v-show="loading" class="row">
@@ -53,70 +37,117 @@
 
         <!--Mo-->
         <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Momir Vig</h2>
+                </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Momir Vig</h2>
-                    <textarea readonly v-el:mo_ta rows="20" class="form-control">{{text('mo')}}</textarea>
-                    <br>
-                </div>
-                <br/>
-                <div class="col-md-12 form-inline">
-                    <div class="form-group">
-                        <label>Converted Mana Cost</label>
-                        <input class="form-control" type="number" min="0" max="99" v-model="moCmc"/>
+                <div class="panel-body row">
+                    <div class="col-md-12 text-center">
+                        <textarea readonly v-el:mo_ta rows="20" class="form-control">{{text('mo')}}</textarea>
+                        <br>
+                        <button class="btn btn-default" v-on:click="copy('mo')">Copy</button>
                     </div>
-                    <br>
                 </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary" v-on:click="generate('mo')">Generate</button>
-                </div>
-                <div class="col-md-6">
-                    <button class="btn btn-default" v-on:click="copy('mo')">Copy Last</button>
+
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="CMC" type="number" min="0" max="99"
+                                   v-model="moCmc"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" v-on:click="generate('mo')">Generate</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!--Jho-->
         <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Jhoira of the Ghitu</h2>
-                    <textarea readonly v-el:jho_ta rows="20" class="form-control">{{text('jho')}}</textarea>
-                    <br>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Jhoira of the Ghitu</h2>
                 </div>
-                <br/>
-                <div class="col-md-6">
-                    <button class="btn btn-primary" v-on:click="generate('jhoInstant')">Generate Instants</button>
+                <div class="panel-body row">
+                    <div class="col-md-4 text-center">
+                        <textarea readonly v-el:jho_ta_0 rows="20" class="form-control">{{text('jho', 0)}}</textarea>
+                        <br>
+                        <button class="btn btn-default" v-on:click="copy('jho', 0)">Copy</button>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <textarea readonly v-el:jho_ta_1 rows="20" class="form-control">{{text('jho', 1)}}</textarea>
+                        <br>
+                        <button class="btn btn-default" v-on:click="copy('jho', 1)">Copy</button>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <textarea readonly v-el:jho_ta_2 rows="20" class="form-control">{{text('jho', 2)}}</textarea>
+                        <br>
+                        <button class="btn btn-default" v-on:click="copy('jho', 2)">Copy</button>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary" v-on:click="generate('jhoSorcery')">Generate Sorceries</button>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" v-on:click="generate('jhoInstant')">Generate Instants
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" v-on:click="generate('jhoSorcery')">Generate Sorceries
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!--Sto-->
         <div class="col-md-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Stonehewer Giant</h2>
-                    <textarea readonly v-el:sto_ta rows="20" class="form-control">{{text('sto')}}</textarea>
-                    <br>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Stonehewer Giant</h2>
                 </div>
-                <div class="col-md-12 form-inline">
-                    <div class="form-group">
-                        <label>Creature's Converted Mana Cost</label>
-                        <input class="form-control" type="number" min="0" max="99" v-model="stoCmc"/>
+                <div class="panel-body row">
+                    <div class="col-md-12 text-center">
+                        <textarea readonly v-el:sto_ta rows="20" class="form-control">{{text('sto')}}</textarea>
+                        <br>
+                        <button class="btn btn-default" v-on:click="copy('sto')">Copy</button>
                     </div>
-                    <br>
                 </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary" v-on:click="generate('sto')">Generate</button>
-                </div>
-                <div class="col-md-6">
-                    <button class="btn btn-default" v-on:click="copy('sto')">Copy Last</button>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="CMC" type="number" min="0" max="99" v-model="stoCmc"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" v-on:click="generate('sto')">Generate</button>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="text-center">How to Use</h2>
+            <ul>
+                <li>Make a deck of 60 basic lands along with any of the 3 avatars you intend to use</li>
+                <li>Start a Cockatrice game as usual with this deck</li>
+                <li>Move the avatars from your deck into play</li>
+                <li>Each time you activate an avatar's ability:
+                    <ul>
+                        <li>Set the relevant CMC below</li>
+                        <li>Press the relevant `Generate` button, and then `Copy` to add it to the clipboard
+                            (this doesn't work for Jhoria since she generates 3 and you only pick one)
+                        </li>
+                        <li>Open the tokens menu in Cockatrice (Ctrl+T)</li>
+                        <li>Paste in the copied card name (Ctrl+V) into the name field without changing any other
+                            settings
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

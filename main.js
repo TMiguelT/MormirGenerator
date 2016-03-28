@@ -115,10 +115,10 @@
 	    el: '#content',
 	    data: {
 	        mo: [],
-	        jho: [],
+	        jho: [[], [], []],
 	        sto: [],
-	        moCmc: 1,
-	        stoCmc: 1,
+	        moCmc: null,
+	        stoCmc: null,
 	        loading: true
 	    },
 	    watch: {
@@ -127,8 +127,10 @@
 	            textarea.scrollTop = textarea.scrollHeight;
 	        },
 	        jho: function jho() {
-	            var textarea = this.$els.jho_ta;
-	            textarea.scrollTop = textarea.scrollHeight;
+	            for (var i = 0; i < 3; i++) {
+	                var textarea = this.$els['jho_ta_' + i];
+	                textarea.scrollTop = textarea.scrollHeight;
+	            }
 	        },
 	        sto: function sto() {
 	            var textarea = this.$els.sto_ta;
@@ -181,11 +183,11 @@
 	                    break;
 	                case 'jhoInstant':
 	                    for (var i = 0; i < 3; i++) {
-	                        this.jho.push(_lodash2.default.sample(this.cards.jhoInstants).name);
+	                        this.jho[i].push(_lodash2.default.sample(this.cards.jhoInstants).name);
 	                    }break;
 	                case 'jhoSorcery':
 	                    for (var _i = 0; _i < 3; _i++) {
-	                        this.jho.push(_lodash2.default.sample(this.cards.jhoSorceries).name);
+	                        this.jho[_i].push(_lodash2.default.sample(this.cards.jhoSorceries).name);
 	                    }break;
 	                case 'sto':
 	                    var card = _lodash2.default.chain(this.cards.sto).pickBy(function (value, key) {
@@ -196,10 +198,10 @@
 	                    break;
 	            }
 	        },
-	        text: function text(type) {
-	            return this[type].join('\n');
+	        text: function text(type, index) {
+	            if (type == 'jho') return this[type][index].join('\n');else return this[type].join('\n');
 	        },
-	        copy: function copy(type) {
+	        copy: function copy(type, index) {
 	            var textarea = void 0;
 	            var lastCard = void 0;
 	            var totalLength = void 0;
@@ -214,6 +216,12 @@
 	                    textarea = this.$els.sto_ta;
 	                    lastCard = _lodash2.default.last(this.sto).length;
 	                    totalLength = this.text('sto').length;
+	                    break;
+	
+	                case "jho":
+	                    textarea = this.$els['jho_ta_' + index];
+	                    lastCard = _lodash2.default.last(this.jho[index]).length;
+	                    totalLength = this.text('jho', index).length;
 	                    break;
 	            }
 	
