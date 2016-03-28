@@ -42,12 +42,9 @@ new Vue({
         this.$els.spin.appendChild(spinner.el);
 
         //Load the cards
-        require(["./AllCards.json"], (MtgJson) => {
+        require(["./filtered.json"], (MtgJson) => {
+            this.groupedCards = MtgJson;
             this.loading = false;
-            this.groupedCards = _.chain(MtgJson)
-                .filter(card => 'types' in card && card.types.indexOf('Creature') != -1)
-                .groupBy('cmc')
-                .value();
         });
     },
     methods: {

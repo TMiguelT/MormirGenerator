@@ -2,6 +2,8 @@ const gulp = require('gulp');
 const getMtgJson = require('mtg-json');
 const webpack = require('webpack-stream');
 const CommonsChunkPlugin = require('webpack').optimize.CommonsChunkPlugin;
+const _ = require('lodash');
+var fsp = require('fs-promise');
 
 const webpackConfig = {
     devtool: 'source-map',
@@ -35,28 +37,33 @@ const webpackConfig = {
     }
 };
 
-gulp.task('build', function () {
-
+function process(watch){
     //Downloads mtg-json
-    return getMtgJson('cards', __dirname + '/src')
+    return getMtgJson('cards', __dirname,  {extras: true})
 
     //Pipes through webpack
-        .then(()=>
+        .then((cards)=>
+           _.chain(cards)
+                .filter(card =>
+                    'types' in card
+                    && card.types.indexOf('Creature') != -1 //Ensure they're all creatures
+                    && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
+                )
+                .groupBy('cmc')
+                .value()
+        ).then(filtered =>
+            fsp.writeFile('src/filtered.json', JSON.stringify(filtered))
+        ).then(() =>
             gulp.src('src/app.jsx')
-                .pipe(webpack(webpackConfig))
+                .pipe(webpack(Object.assign(webpackConfig, {watch: watch})))
                 .pipe(gulp.dest('dist/'))
         )
+}
+
+gulp.task('build', function () {
+    return process(false);
 });
 
 gulp.task('watch', function () {
-
-    //Downloads mtg-json
-    return getMtgJson('cards', __dirname + '/src')
-
-    //Pipes through webpack
-        .then(()=>
-            gulp.src('src/app.jsx')
-                .pipe(webpack(Object.assign(webpackConfig, {watch: true})))
-                .pipe(gulp.dest('dist/'))
-        )
+    return process(true);
 });

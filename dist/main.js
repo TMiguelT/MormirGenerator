@@ -153,10 +153,8 @@
 	
 	        //Load the cards
 	        __webpack_require__.e/* require */(1, function(__webpack_require__) { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(6)]; (function (MtgJson) {
+	            _this.groupedCards = MtgJson;
 	            _this.loading = false;
-	            _this.groupedCards = _lodash2.default.chain(MtgJson).filter(function (card) {
-	                return 'types' in card && card.types.indexOf('Creature') != -1;
-	            }).groupBy('cmc').value();
 	        }.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));});
 	    },
 	
