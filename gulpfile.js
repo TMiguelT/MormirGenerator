@@ -37,27 +37,53 @@ const webpackConfig = {
     }
 };
 
-function process(watch){
+function process(watch) {
     //Downloads mtg-json
-    return getMtgJson('cards', __dirname,  {extras: true})
+    return getMtgJson('cards', __dirname, {extras: true})
 
     //Pipes through webpack
-        .then((cards)=>
-           _.chain(cards)
+        .then(cards => ({
+            mo: _.chain(cards)
                 .filter(card =>
                     'types' in card
                     && card.types.indexOf('Creature') != -1 //Ensure they're all creatures
                     && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
                 )
                 .groupBy('cmc')
+                .value(),
+
+            jhoInstants: _.chain(cards)
+                .filter(card =>
+                    'types' in card
+                    && card.types.indexOf('Instant') != -1 //Ensure they're all creatures
+                    && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
+                )
+                .value(),
+
+            jhoSorceries: _.chain(cards)
+                .filter(card =>
+                    'types' in card
+                    && card.types.indexOf('Sorcery') != -1 //Ensure they're all creatures
+                    && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
+                )
+                .value(),
+
+            sto: _.chain(cards)
+                .filter(card =>
+                    'subtypes' in card
+                    && card.subtypes.indexOf('Equipment') != -1 //Ensure they're all creatures
+                    && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
+                )
+                .groupBy('cmc')
                 .value()
-        ).then(filtered =>
+
+        })).then(filtered =>
             fsp.writeFile('src/filtered.json', JSON.stringify(filtered))
         ).then(() =>
             gulp.src('src/app.jsx')
                 .pipe(webpack(Object.assign(webpackConfig, {watch: watch})))
                 .pipe(gulp.dest('dist/'))
-        )
+        );
 }
 
 gulp.task('build', function () {

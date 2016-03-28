@@ -5,13 +5,25 @@ import Spinner from 'spin'
 new Vue({
     el: '#content',
     data: {
-        cards: [],
-        cmc: 1,
+        mo: [],
+        jho: [],
+        sto: [],
+        moCmc: 1,
+        stoCmc: 1,
         loading: true
     },
-    computed: {
-        cardsList(){
-            return this.cards.join('\n');
+    watch:{
+        mo(){
+            const textarea = this.$els.mo_ta;
+            textarea.scrollTop = textarea.scrollHeight;
+        },
+        jho(){
+            const textarea = this.$els.jho_ta;
+            textarea.scrollTop = textarea.scrollHeight;
+        },
+        sto(){
+            const textarea = this.$els.sto_ta;
+            textarea.scrollTop = textarea.scrollHeight;
         }
     },
     ready(){
@@ -43,20 +55,59 @@ new Vue({
 
         //Load the cards
         require(["./filtered.json"], (MtgJson) => {
-            this.groupedCards = MtgJson;
+            this.cards = MtgJson;
             this.loading = false;
         });
     },
     methods: {
-        generate(){
-            const section = this.groupedCards[this.cmc];
-            this.cards.push(_.sample(section).name);
+        generate(type){
+            switch (type) {
+                case 'mo':
+                    const section = this.cards.mo[this.moCmc];
+                    this.mo.push(_.sample(section).name);
+                    break;
+                case 'jhoInstant':
+                    for (let i = 0; i < 3; i++)
+                        this.jho.push(_.sample(this.cards.jhoInstants).name);
+                    break;
+                case 'jhoSorcery':
+                    for (let i = 0; i < 3; i++)
+                        this.jho.push(_.sample(this.cards.jhoSorceries).name);
+                    break;
+                case 'sto':
+                    const card = _.chain(this.cards.sto)
+                        .pickBy((value, key) => parseInt(key) < this.stoCmc)
+                        .values()
+                        .flatten()
+                        .sample()
+                        .value();
+
+                    this.sto.push(card.name);
+                    break;
+            }
         },
 
-        copy(){
-            const textarea = this.$els.ta;
-            const lastCard = _.last(this.cards).length;
-            const totalLength = this.cardsList.length;
+        text(type){
+            return this[type].join('\n');
+        },
+
+        copy(type){
+            let textarea;
+            let lastCard;
+            let totalLength;
+
+            switch (type) {
+                case "mo":
+                    textarea = this.$els.mo_ta;
+                    lastCard = _.last(this.mo).length;
+                    totalLength = this.text('mo').length;
+                    break;
+                case "sto":
+                    textarea = this.$els.sto_ta;
+                    lastCard = _.last(this.sto).length;
+                    totalLength = this.text('sto').length;
+                    break;
+            }
 
             //Select the new area
             textarea.setSelectionRange(totalLength - lastCard, totalLength);
