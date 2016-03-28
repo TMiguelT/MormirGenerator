@@ -66,15 +66,15 @@ new Vue({
             switch (type) {
                 case 'mo':
                     const section = this.cards.mo[this.moCmc];
-                    this.mo.push(_.sample(section).name);
+                    this.mo.push(_.sample(section));
                     break;
                 case 'jhoInstant':
                     for (let i = 0; i < 3; i++)
-                        this.jho[i].push(_.sample(this.cards.jhoInstants).name);
+                        this.jho[i].push(_.sample(this.cards.jhoInstants));
                     break;
                 case 'jhoSorcery':
                     for (let i = 0; i < 3; i++)
-                        this.jho[i].push(_.sample(this.cards.jhoSorceries).name);
+                        this.jho[i].push(_.sample(this.cards.jhoSorceries));
                     break;
                 case 'sto':
                     const card = _.chain(this.cards.sto)
@@ -84,7 +84,7 @@ new Vue({
                         .sample()
                         .value();
 
-                    this.sto.push(card.name);
+                    this.sto.push(card);
                     break;
             }
         },

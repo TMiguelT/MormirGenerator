@@ -38,3 +38,5 @@ node_modules
 *.idea
 
 AllCards-x.json
+
+src/filtered.json

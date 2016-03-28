@@ -1,7 +1,7 @@
 const gulp = require('gulp');
 const getMtgJson = require('mtg-json');
 const webpack = require('webpack-stream');
-const CommonsChunkPlugin = require('webpack').optimize.CommonsChunkPlugin;
+const UglifyJsPlugin = require('webpack').optimize.UglifyJsPlugin;
 const _ = require('lodash');
 var fsp = require('fs-promise');
 
@@ -34,7 +34,10 @@ const webpackConfig = {
                 loader: 'json' // 'babel-loader' is also a legal name to reference
             }
         ]
-    }
+    },
+    plugins: [
+        new UglifyJsPlugin({minimize: true})
+    ]
 };
 
 function process(watch) {
@@ -50,6 +53,7 @@ function process(watch) {
                     && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
                 )
                 .groupBy('cmc')
+                .mapValues(group => _.map(group, 'name'))
                 .value(),
 
             jhoInstants: _.chain(cards)
@@ -58,6 +62,7 @@ function process(watch) {
                     && card.types.indexOf('Instant') != -1 //Ensure they're all creatures
                     && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
                 )
+                .map('name')
                 .value(),
 
             jhoSorceries: _.chain(cards)
@@ -66,6 +71,7 @@ function process(watch) {
                     && card.types.indexOf('Sorcery') != -1 //Ensure they're all creatures
                     && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
                 )
+                .map('name')
                 .value(),
 
             sto: _.chain(cards)
@@ -75,6 +81,7 @@ function process(watch) {
                     && _.intersection(card.printings, ['UGL', 'UNH']).length == 0 //Ensure they're not from Un-sets
                 )
                 .groupBy('cmc')
+                .mapValues(group => _.map(group, 'name'))
                 .value()
 
         })).then(filtered =>
